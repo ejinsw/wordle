@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,15 @@ public class Main : MonoBehaviour
     [SerializeField] private TextAsset wordleBank;
     [SerializeField] private TextAsset guessBank;
     [SerializeField] private Transform guessParent;
+    [SerializeField] private GameObject gameScreen;
+    [SerializeField] private GameObject loseScreen;
+    [SerializeField] private TMP_Text answerTxt;
 
     private List<List<TMP_Text>> rows = new();
-    
+
     private string answer = "";
     private int attempt = 0;
-    
+
     private List<string> wordleBankList = new();
     private List<string> guessBankList = new();
     public List<string> guessHistory = new();
@@ -26,6 +30,9 @@ public class Main : MonoBehaviour
 
     private void Start()
     {
+        gameScreen.SetActive(true);
+        loseScreen.SetActive(false);
+        
         for (int i = 0; i < 6; i++)
         {
             rows.Add(new List<TMP_Text>());
@@ -48,6 +55,18 @@ public class Main : MonoBehaviour
 
         attempt = 0;
         answer = wordleBankList[Random.Range(0, wordleBankList.Count)].ToUpper();
+    }
+
+    private void Update()
+    {
+        if (attempt == 6)
+        {
+            gameScreen.SetActive(false);
+            loseScreen.SetActive(true);
+
+            answerTxt.text = "The word was:\n" + answer.ToLower();
+
+        }
     }
 
     public void CheckAnswer()
@@ -74,11 +93,11 @@ public class Main : MonoBehaviour
             display.text = "Not a valid word!";
         }
         //run code if it passes checks
-        else
+        else 
         {
             //put user input into the guess history
             guessHistory.Add(userInput.text);
-
+            
             //add all the matching characters into the greenDict
             Dictionary<char, int> greenDict = new();
             for (int i = 0; i < userInput.text.Length; i++)
@@ -93,7 +112,7 @@ public class Main : MonoBehaviour
                     greenDict[userInput.text[i]]++;
                 }
             }
-            
+
             //add all the available characters into the answerDict
             Dictionary<char, int> answerDict = new();
             for (int i = 0; i < answer.Length; i++)
@@ -111,7 +130,7 @@ public class Main : MonoBehaviour
             for (int i = 0; i < userInput.text.Length; i++)
             {
                 char inputChar = userInput.text[i];
-             
+
                 //set G if matching
                 if (userInput.text[i] == answer[i])
                 {
@@ -128,12 +147,12 @@ public class Main : MonoBehaviour
                     usedYellows.TryAdd(inputChar, 0);
                     answerDict.TryAdd(inputChar, 0);
                     greenDict.TryAdd(inputChar, 0);
-                    
+
                     //set Y if the usedYellows + the matches is less than the value in the answerDict
                     if (usedYellows[inputChar] + greenDict[inputChar] < answerDict[inputChar])
                     {
                         output += "Y";
-                        
+
                         //+1 to the usedYellows
                         usedYellows[inputChar]++;
                     }
@@ -143,17 +162,17 @@ public class Main : MonoBehaviour
                     }
                 }
             }
-        }
 
-        attempt++;
-        GuessAttempt(output);
+            attempt++;
+            GuessAttempt(output);
+        }
     }
 
     private void GuessAttempt(string output)
     {
         string guessWord = guessHistory[attempt - 1];
         string matches = display.text;
-        
+
 
         for (int i = 0; i < 5; i++)
         {
@@ -172,7 +191,5 @@ public class Main : MonoBehaviour
                 rows[attempt - 1][i].transform.parent.GetComponent<Image>().color = Color.yellow;
             }
         }
-        
-
     }
 }
