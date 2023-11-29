@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -16,12 +17,15 @@ public class Main : MonoBehaviour
     [SerializeField] private Transform guessParent;
     [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject loseScreen;
-    [SerializeField] private TMP_Text answerTxt;
+    [SerializeField] private TMP_Text answerLose;
+    [SerializeField] private GameObject victoryScreen;
+    [SerializeField] private TMP_Text answerVictory;
 
     private List<List<TMP_Text>> rows = new();
 
-    private string answer = "";
-    private int attempt = 0;
+    private string answer;
+    private int attempt;
+    private bool victory;
 
     private List<string> wordleBankList = new();
     private List<string> guessBankList = new();
@@ -54,17 +58,26 @@ public class Main : MonoBehaviour
         }
 
         attempt = 0;
-        answer = wordleBankList[Random.Range(0, wordleBankList.Count)].ToUpper();
+        victory = false;
+        answer = wordleBankList[Random.Range(0, wordleBankList.Count)].ToLower();
     }
 
     private void Update()
     {
-        if (attempt == 6)
+        if (victory)
+        {
+            gameScreen.SetActive(false);
+            victoryScreen.SetActive(true);
+            
+            answerVictory.text = "The word was:\n" + answer;
+        }
+        
+        if (attempt == 6 && !victory)
         {
             gameScreen.SetActive(false);
             loseScreen.SetActive(true);
 
-            answerTxt.text = "The word was:\n" + answer.ToLower();
+            answerLose.text = "The word was:\n" + answer;
 
         }
     }
@@ -75,7 +88,7 @@ public class Main : MonoBehaviour
         display.text = "";
         string output = "";
 
-        userInput.text = userInput.text.ToUpper();
+        userInput.text = userInput.text.ToLower();
 
         //check if the word is too long
         if (userInput.text.Length > answer.Length)
@@ -163,6 +176,7 @@ public class Main : MonoBehaviour
                 }
             }
 
+            if (output == "GGGGG") victory = true;
             attempt++;
             GuessAttempt(output);
         }
@@ -171,13 +185,11 @@ public class Main : MonoBehaviour
     private void GuessAttempt(string output)
     {
         string guessWord = guessHistory[attempt - 1];
-        string matches = display.text;
-
 
         for (int i = 0; i < 5; i++)
         {
             rows[attempt - 1][i].color = Color.white;
-            rows[attempt - 1][i].text = guessWord[i].ToString();
+            rows[attempt - 1][i].text = guessWord[i].ToString().ToUpper();
             if (output[i] == 'G')
             {
                 rows[attempt - 1][i].transform.parent.GetComponent<Image>().color = Color.green;
