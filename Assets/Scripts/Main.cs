@@ -70,6 +70,7 @@ public class Main : MonoBehaviour
 
     private void Update()
     {
+        string input = userInput;
         if (victory)
         {
             gameScreen.SetActive(false);
@@ -85,6 +86,39 @@ public class Main : MonoBehaviour
 
             answerLose.text = "The word was:\n" + answer.FirstCharacterToUpper();
         }
+
+        #region UserInput from Typing
+        if (Input.GetKeyDown(KeyCode.A)) GetUserInput(input += "A");
+        if (Input.GetKeyDown(KeyCode.B)) GetUserInput(input += "B");
+        if (Input.GetKeyDown(KeyCode.C)) GetUserInput(input += "C");
+        if (Input.GetKeyDown(KeyCode.D)) GetUserInput(input += "D");
+        if (Input.GetKeyDown(KeyCode.E)) GetUserInput(input += "E");
+        if (Input.GetKeyDown(KeyCode.F)) GetUserInput(input += "F");
+        if (Input.GetKeyDown(KeyCode.G)) GetUserInput(input += "G");
+        if (Input.GetKeyDown(KeyCode.H)) GetUserInput(input += "H");
+        if (Input.GetKeyDown(KeyCode.I)) GetUserInput(input += "I");
+        if (Input.GetKeyDown(KeyCode.J)) GetUserInput(input += "J");
+        if (Input.GetKeyDown(KeyCode.K)) GetUserInput(input += "K");
+        if (Input.GetKeyDown(KeyCode.L)) GetUserInput(input += "L");
+        if (Input.GetKeyDown(KeyCode.M)) GetUserInput(input += "M");
+        if (Input.GetKeyDown(KeyCode.N)) GetUserInput(input += "N");
+        if (Input.GetKeyDown(KeyCode.O)) GetUserInput(input += "O");
+        if (Input.GetKeyDown(KeyCode.P)) GetUserInput(input += "P");
+        if (Input.GetKeyDown(KeyCode.Q)) GetUserInput(input += "Q");
+        if (Input.GetKeyDown(KeyCode.R)) GetUserInput(input += "R");
+        if (Input.GetKeyDown(KeyCode.S)) GetUserInput(input += "S");
+        if (Input.GetKeyDown(KeyCode.T)) GetUserInput(input += "T");
+        if (Input.GetKeyDown(KeyCode.U)) GetUserInput(input += "U");
+        if (Input.GetKeyDown(KeyCode.V)) GetUserInput(input += "V");
+        if (Input.GetKeyDown(KeyCode.W)) GetUserInput(input += "W");
+        if (Input.GetKeyDown(KeyCode.X)) GetUserInput(input += "X");
+        if (Input.GetKeyDown(KeyCode.Y)) GetUserInput(input += "Y");
+        if (Input.GetKeyDown(KeyCode.Z)) GetUserInput(input += "Z");
+        if (Input.GetKeyDown(KeyCode.Backspace) && userInput.Length > 0) Backspace();
+        if (Input.GetKeyDown(KeyCode.Return)) CheckAnswer();
+
+        #endregion
+        
     }
 
     public void GetUserInput(string s)
@@ -96,9 +130,9 @@ public class Main : MonoBehaviour
         }
     }
 
-    public void Backspace(string s)
+    public void Backspace()
     {
-        userInput = s;
+        userInput = userInput.Substring(0, userInput.Length - 1).ToUpper();
         UpdateWord(true);
     }
 
@@ -107,9 +141,7 @@ public class Main : MonoBehaviour
         //set display to empty
         display.text = "";
         string output = "";
-
-        userInput = userInput.ToLower();
-
+        
         //check if the word is too long
         if (userInput.Length > answer.Length)
         {
@@ -128,6 +160,8 @@ public class Main : MonoBehaviour
         //run code if it passes checks
         else
         {
+            userInput = userInput.ToLower();
+            
             //put user input into the guess history
             guessHistory.Add(userInput);
 

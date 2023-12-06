@@ -31,7 +31,7 @@ public class KeyboardButton : MonoBehaviour
     private void DeleteChar()
     {
         if (input.Length > 0)
-           Main.instance.Backspace(input.Substring(0, input.Length - 1).ToUpper());
+           Main.instance.Backspace();
     }
 
     private void Clicked()
