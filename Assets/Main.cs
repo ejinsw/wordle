@@ -25,8 +25,8 @@ public class Main : MonoBehaviour
 
     private List<List<TMP_Text>> rows = new();
 
-    private string answer;
-    private int attempt;
+    public string answer;
+    public int attempt;
     private bool victory;
     public string userInput;
 
@@ -94,15 +94,12 @@ public class Main : MonoBehaviour
             userInput = s;
             UpdateWord(false);
         }
-
-        Debug.Log(userInput);
     }
 
     public void Backspace(string s)
     {
         userInput = s;
         UpdateWord(true);
-        Debug.Log(userInput);
     }
 
     public void CheckAnswer()
@@ -163,6 +160,7 @@ public class Main : MonoBehaviour
 
             //set G, R, or Y
             Dictionary<char, int> usedYellows = new();
+            Dictionary<char, int> redDict = new();
             for (int i = 0; i < userInput.Length; i++)
             {
                 char inputChar = userInput[i];
@@ -175,6 +173,14 @@ public class Main : MonoBehaviour
                 //set R if the input character isn't in the answerDict
                 else if (!answerDict.ContainsKey(inputChar))
                 {
+                    if (redDict.ContainsKey(inputChar))
+                    {
+                        redDict[inputChar]++;
+                    }
+                    else
+                    {
+                        redDict.Add(inputChar, 0);
+                    }
                     output += "R";
                 }
                 //set Y if input character isn't G but is in the answerDict
@@ -182,10 +188,9 @@ public class Main : MonoBehaviour
                 {
                     usedYellows.TryAdd(inputChar, 0);
                     answerDict.TryAdd(inputChar, 0);
-                    greenDict.TryAdd(inputChar, 0);
-
+                    
                     //set Y if the usedYellows + the matches is less than the value in the answerDict
-                    if (usedYellows[inputChar] + greenDict[inputChar] < answerDict[inputChar])
+                    if (usedYellows[inputChar] + (greenDict.ContainsKey(inputChar) ? greenDict[inputChar] : 0) < answerDict[inputChar])
                     {
                         output += "Y";
 
@@ -203,6 +208,7 @@ public class Main : MonoBehaviour
             attempt++;
             GuessAttempt(output);
             userInput = "";
+            KeyboardButton.instance.ChangeColors(greenDict, usedYellows, redDict);
         }
     }
 
